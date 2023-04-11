@@ -4,64 +4,19 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class Main {
+    static StringBuilder logs = new StringBuilder();
     public static void main(String[] args) {
-        StringBuilder logs = new StringBuilder();
 
-        String[] directoriesNames = {"src", "res", "savegames", "temp"};
-        for(String name : directoriesNames) {
-            if (new File("C://Games", name).mkdir()) {
-                logs.append("Directory ").append(name).append(" is created ").append("in directory C://Games").append("\n");
-            } else {
-                logs.append("Something went wrong with ").append(name);
-            }
-        }
-        String[] srcDirectoriesNames = {"main", "test"};
-        for(String name : srcDirectoriesNames) {
-            if (new File("C://Games/src", name).mkdir()) {
-                logs.append("Directory ").append(name).append(" is created ").append("in directory C://Games/src").append("\n");
-            } else {
-                logs.append("Something went wrong with ").append(name);
 
-            }
-        }
-        String[] resDirectoriesNames = {"drawables", "vectors", "icons"};
-        for(String name : resDirectoriesNames) {
-            if(new File("C://Games/res", name).mkdir()) {
-                logs.append("Directory ").append(name).append(" is created ").append("in directory C://Games/res").append("\n");
-            } else {
-                logs.append("Something went wrong with ").append(name);
-            }
-        }
+        String[] directoriesNames = {"C://Games/src", "C://Games/res", "C://Games/savegames",
+                "C://Games/temp", "C://Games/src/main", "C://Games/src/test",
+                "C://Games/res/drawables", "C://Games/res/vectors", "C://Games/res/icons"};
+
+        String[] fileNames = {"C://Games/src/Main.java", "C://Games/src/Utils", "C://Games/temp/temp.txt"};
         File main = new File("C://Games/src", "Main.java");
-        try {
-            if(main.createNewFile()) {
-                logs.append("File Main.java is created in directory C://Games/src" + "\n");
-            } else {
-                logs.append("Something went wrong with file Main.java");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        File utils = new File("C://Games/src", "Utils.java");
-        try {
-            if(utils.createNewFile()) {
-                logs.append("File Utils.java is created in directory C://Games/src" + "\n");
-            } else {
-                logs.append("Something went wrong with file Utils.java");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        File temp = new File("C://Games/temp", "temp.txt");
-        try {
-            if(temp.createNewFile()) {
-                logs.append("File temp.txt is created in directory C://Games/temp" + "\n");
-            } else {
-                logs.append("Something went wrong with file temp.txt");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        createDirectory(directoriesNames);
+        createFile(fileNames);
+
         GameProgress gp1 = new GameProgress(100,1,1,0.0);
         GameProgress gp2 = new GameProgress(40,1,3,100.0);
         GameProgress gp3 = new GameProgress(80,4,10,1000.25);
@@ -87,6 +42,32 @@ public class Main {
 
 
 
+    }
+    public static void addLog(StringBuilder logs, String log) {
+        logs.append(log);
+
+    }
+    public static void createDirectory(String[] directoriesNames) {
+        for(String name : directoriesNames) {
+            if (new File(name).mkdir()) {
+                addLog(logs, "Directory " + name + " is created! \n");
+            } else {
+               addLog(logs, "Something went wrong with " + name);
+            }
+        }
+    }
+    public static void createFile(String[] filesNames) {
+        for(String name : filesNames) {
+            try {
+                if(new File(name).createNewFile()) {
+                    addLog(logs, "File " + name + " is created! \n");
+                } else {
+                    addLog(logs, "Something went wrong with " + name);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
     public static void saveGame(String path, GameProgress gp) {
         try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(path))) {
